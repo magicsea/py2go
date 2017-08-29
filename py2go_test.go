@@ -10,7 +10,8 @@ import (
 func TestPy2go(t *testing.T) {
 
 	fmt.Print(':', '\r', '\n', "--")
-	path := "res/test.py"
+	path := "res/utility.py"
+	//path := "res/test.py"
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Println("ReadFile fail:", path, err)
@@ -22,6 +23,7 @@ func TestPy2go(t *testing.T) {
 	fmt.Println(buf.Len())
 
 	var part = new(CodePart)
+	part.partType = CodePart_Root
 	err = part.Parse(buf)
 	if err != nil {
 		fmt.Println("Parse fail:", err)
@@ -43,6 +45,19 @@ func TestFile(t *testing.T) {
 }
 
 func TestDir(t *testing.T) {
-	ScanDir("./res/")
-	ScanDir("./")
+	if err := ScanDir("./res/"); err != nil {
+		fmt.Println("ScanDir error:", err)
+		return
+	}
+	if err := ScanDir("./"); err != nil {
+		fmt.Println("ScanDir error:", err)
+		return
+	}
+}
+func TestSimple(t *testing.T) {
+	var list = []int{0, 1, 2, 3, 4}
+	var n = 3
+	list = append(list[0:n], list[n+1:]...)
+	fmt.Println(list)
+
 }

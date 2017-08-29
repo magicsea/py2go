@@ -22,7 +22,12 @@ class BattleCard(object):
             self.rub_BigRound = bigRound
             self.roundUsedBuffDict = {}
         a = 3
-        a = 4
+        if a==b and value in [1, 2] and c==d:
+            a = 4
+        if X in [-233, -232, -247]:
+            print 'a'
+        cardInfo.equipList.append(1)
+        _list.append((cardId, equipList))
         if buffId not in self.roundUsedBuffDict:
             self.roundUsedBuffDict[buffId] = 1
             return True

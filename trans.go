@@ -24,6 +24,8 @@ func GetGolangTrans(ctype CodePartType) ITranslate {
 		return new(GoElse)
 	case CodePart_raw:
 		return new(GoRaw)
+	case CodePart_Root:
+		return new(GoRoot)
 	default:
 		return new(GoRaw)
 	}

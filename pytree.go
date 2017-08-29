@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -18,21 +17,6 @@ const (
 	ELSE   = "else"
 )
 
-//替换关键字
-var keywordMap = map[string]string{
-	" True\n":  " true\n",
-	" False\n": " False\n",
-	" not ":    " !",
-}
-
-func ReplaceKeys(str string) string {
-	l := len(str)
-	for k, v := range keywordMap {
-		str = strings.Replace(str, k, v, l)
-	}
-	return str
-}
-
 type CodePartType int
 
 const (
@@ -46,6 +30,7 @@ const (
 	CodePart_raw
 
 	CodePart_NONE = -1
+	CodePart_Root = -10
 )
 
 var codePartHeadMap = map[CodePartType]string{
@@ -61,6 +46,14 @@ type TransFunc func(part *CodePart) string
 
 //反向map
 var codePartHeadMapRev = make(map[string]CodePartType)
+
+func ReplaceKeys(str string) string {
+	l := len(str)
+	for k, v := range keywordMap {
+		str = strings.Replace(str, k, v, l)
+	}
+	return str
+}
 
 type CodePart struct {
 	partType CodePartType
@@ -98,21 +91,24 @@ func getHeadType(line string) (CodePartType, int, string) {
 }
 
 func (p *CodePart) Parse(buf *bytes.Buffer) error {
-	head, err := buf.ReadString('\n')
-	if err == io.EOF {
-		return nil
-	}
+	buf.WriteString("\n\n")
+	return p.doParse(buf, CodePart_Root, -1, "", nil)
+	/*
+		head, err := buf.ReadString('\n')
+		if err == io.EOF {
+			return nil
+		}
 
-	if err != nil {
-		fmt.Errorf("%v", err)
-	}
+		if err != nil {
+			fmt.Errorf("%v", err)
+		}
 
-	if tp, headpos, vals := getHeadType(head); tp == CodePart_NONE {
-		return errors.New(fmt.Sprintf("getHeadType fail", head))
-	} else {
-		return p.doParse(buf, tp, headpos, parseHead(head, vals), nil)
-	}
-
+		if tp, headpos, vals := getHeadType(head); tp == CodePart_NONE {
+			return errors.New(fmt.Sprintf("getHeadType fail", head))
+		} else {
+			return p.doParse(buf, tp, headpos, parseHead(head, vals), nil)
+		}
+	*/
 }
 
 func parseHead(head string, key string) string {
@@ -139,6 +135,7 @@ func (p *CodePart) doParse(buf *bytes.Buffer, setpart CodePartType, headpos int,
 		//fmt.Println("buf:", len(buf.Bytes()))
 		line, err := buf.ReadString('\n')
 		if err == io.EOF {
+			//fmt.Println("to end:", line)
 			break
 		}
 		//判断空行
@@ -185,7 +182,25 @@ func (p *CodePart) doParse(buf *bytes.Buffer, setpart CodePartType, headpos int,
 
 //缩进
 func (p *CodePart) writeScale(buf *bytes.Buffer) {
-	for index := 0; index < p.headPos-4; index++ {
+	var inClass bool = false
+	var pr *CodePart = p
+	//fmt.Println("writeScale ", pr)
+	for {
+		pr = pr.parent
+		if pr == nil {
+			break
+		}
+		if pr.partType == CodePart_class {
+			inClass = true
+			break
+		}
+	}
+	//fmt.Println("writeScale end", inClass)
+	var lastPos = p.headPos
+	if inClass {
+		lastPos -= 4
+	}
+	for index := 0; index < lastPos; index++ {
 		buf.WriteString(" ")
 	}
 }

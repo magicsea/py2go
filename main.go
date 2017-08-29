@@ -14,23 +14,35 @@ func main() {
 	if len(os.Args) > 1 {
 		for i := 1; i < len(os.Args); i++ {
 			path := os.Args[i]
-			TransPy(path)
+			if err := TransPy(path); err != nil {
+				fmt.Println("TransPy error:", err)
+				return
+			}
 		}
 	} else {
-		ScanDir("./res/")
-		ScanDir("./")
+		if err := ScanDir("./res/"); err != nil {
+			fmt.Println("ScanDir error:", err)
+			return
+		}
+		if err := ScanDir("./"); err != nil {
+			fmt.Println("ScanDir error:", err)
+			return
+		}
 	}
 }
 
-func ScanDir(dir string) {
+func ScanDir(dir string) error {
 	files, err := ListDir(dir, ".py")
 	if err != nil {
 		//fmt.Println("ListDir error:", err)
-		return
+		return nil
 	}
 	for _, path := range files {
-		TransPy(path)
+		if err := TransPy(path); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 //获取指定目录下的所有文件，不进入下一级目录搜索，可以匹配后缀过滤。
@@ -64,6 +76,7 @@ func TransPy(path string) error {
 	buf := bytes.NewBuffer(data)
 
 	var part = new(CodePart)
+	part.partType = CodePart_Root
 	err = part.Parse(buf)
 	if err != nil {
 		fmt.Println("Parse fail:", err)

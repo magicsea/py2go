@@ -1,6 +1,7 @@
+
 type  BattleCard struct {}
 
-func (self *BattleCard)  checkBuffLimit(self, buffId, bigRound) {
+func (self *BattleCard)  checkBuffLimit( buffId, bigRound) {
     buffInfo = d_buff_info.getInfo(buffId)
     if  self.rub_BigRound != bigRound {
         self.rub_BigRound = bigRound
@@ -18,16 +19,23 @@ func (self *BattleCard)  checkBuffLimit(self, buffId, bigRound) {
     } else {
         self.ownCardDict[cardId] += cardNum
     }
-    return False
+    return false
 }
-func (self *BattleCard)  checkBuffLimit2(self, buffId, bigRound) {
+func (self *BattleCard)  checkBuffLimit2( buffId, bigRound) {
     buffInfo2 = d_buff_info.getInfo(buffId)
     if  self.rub_BigRound != bigRound {
         self.rub_BigRound = bigRound
         self.roundUsedBuffDict = {}
     }
     a = 3
-    a = 4
+    if  a==b&&(value==1||value== 2)&&c==d {
+        a = 4
+    }
+    if ( X==-233|| X== -232|| X== -247) {
+        fmt.Println('a')
+    }
+    cardInfo.equipList=append(cardInfo.equipList,1)
+    _list=append(_list,(cardId, equipList))
     if  buffId !in self.roundUsedBuffDict {
         self.roundUsedBuffDict[buffId] = 1
         return true
@@ -37,20 +45,20 @@ func (self *BattleCard)  checkBuffLimit2(self, buffId, bigRound) {
     }
     return true
 }
-func (self *BattleCard)  testFor(self) {
-    for  _guildId :=range lists {
-        print _guildId
+func (self *BattleCard)  testFor() {
+    for _, _guildId :=range lists {
+        fmt.Println(_guildId)
     }
     for  uid,_ :=range guild.guildMember {
-        print uid
+        fmt.Println(uid)
     }
     for _, guild :=range self.guildDict {
-        print guild
+        fmt.Println(guild)
     }
-    for  uid, member in guild.guildMember.iteritems() {
-        print uid, member
+    for  uid, member :=range guild.guildMember {
+        fmt.Println(uid, member)
     }
     for  i:=0; i<100; i++ {
-        print i
+        fmt.Println(i)
     }
 }
